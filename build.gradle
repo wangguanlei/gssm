@@ -1,0 +1,179 @@
+plugins { id 'org.hidetake.ssh' version '2.0.0' }
+
+apply plugin: 'war'
+
+//JDK 8
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+version = '0.1'
+
+// Web directory, this overrides the default value "webapp"
+//project.webAppDirName = 'webapp'
+war {
+	// War file name
+	baseName = 'gssm'
+	classifier  = (new Date()).format('yyyyMMdd_HHmmss'); //不应该用classifier
+	//from 'src/main/webapp' // js, css, font等资源文件
+}
+
+tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
+
+// 加载配置文件
+ext {
+	environment = project.hasProperty('env') ? env : 'dev'
+	println "当前环境： " + environment
+
+	config = loadGroovyConfig()
+}
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+	// Use 'jcenter' for resolving your dependencies.
+	// You can declare any Maven/Ivy/file repository here.
+
+	maven{
+		url 'http://maven.oschina.net/content/groups/public/'
+		url 'http://jcenter.bintray.com'
+	}
+	jcenter()
+	mavenCentral()
+}
+
+// See http://gradle.org/docs/current/userguide/dependency_management.html
+//   Section 51.4.4. File dependencies
+dependencies {
+
+	compile 'org.springframework:spring-context:4.2.4.RELEASE'
+	compile 'org.springframework:spring-webmvc:4.2.4.RELEASE'
+	compile 'org.springframework:spring-jdbc:4.2.4.RELEASE'
+	compile 'org.springframework:spring-test:4.2.4.RELEASE'
+
+	// https://mvnrepository.com/artifact/org.aspectj/aspectjweaver
+	compile group: 'org.aspectj', name: 'aspectjweaver', version: '1.8.10'
+	// apache shiro
+//	compile 'org.apache.shiro:shiro-core:1.2.4'
+//	compile 'org.apache.shiro:shiro-web:1.2.4'
+//	compile 'org.apache.shiro:shiro-spring:1.2.4'
+//	compile 'org.apache.shiro:shiro-ehcache:1.2.4'
+
+	compile 'javax.servlet:servlet-api:2.5'
+	//jackson 2.7.0 spring 4.3才会支持: https://jira.spring.io/browse/SPR-13483
+	compile 'com.fasterxml.jackson.core:jackson-core:2.6.5'
+	compile 'com.fasterxml.jackson.core:jackson-databind:2.6.5'
+	compile 'com.fasterxml.jackson.core:jackson-annotations:2.6.5'
+	compile 'org.mybatis:mybatis-spring:1.2.3'
+	compile 'org.mybatis:mybatis:3.3.0'
+	compile 'mysql:mysql-connector-java:5.1.37'
+	// compile 'commons-dbcp:commons-dbcp:1.4'
+	compile 'com.alibaba:druid:1.0.18'
+//	compile 'org.jvnet.jaxb2.maven2:maven-jaxb2-plugin:0.13.1'
+	compile 'jstl:jstl:1.2'
+	//compile 'net.sf.ehcache:ehcache:2.10.1'
+
+//	compile 'org.ehcache:ehcache:3.0.1'
+
+	// validation
+	compile 'javax.validation:validation-api:1.1.0.Final'
+	compile 'org.hibernate:hibernate-validator:5.2.2.Final'
+
+	// https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-mapper-asl
+	compile group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.9.13'
+
+	compile 'org.apache.logging.log4j:log4j-core:2.4.1'
+	// The production code uses the SLF4J logging API at compile time
+//	compile 'org.slf4j:slf4j-api:1.7.12'
+	compile 'org.slf4j:slf4j-log4j12:1.7.16'
+
+	//JSONObject-2.0
+	compile 'org.json:json:20160212'
+	// https://mvnrepository.com/artifact/redis.clients/jedis
+	compile group: 'redis.clients', name: 'jedis', version: '2.9.0'
+	// https://mvnrepository.com/artifact/org.springframework.data/spring-data-redis
+	compile group: 'org.springframework.data', name: 'spring-data-redis', version: '1.8.4.RELEASE'
+
+	// Declare the dependency for your favourite test framework you want to use in your tests.
+	// TestNG is also supported by the Gradle Test task. Just change the
+	// testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
+	// 'test.useTestNG()' to your build script.
+	testCompile 'junit:junit:4.12'
+
+	//JSCH
+	//compile 'jsch:jsch:0.1.8'
+	compile 'org.apache.ant:ant-jsch:1.9.6'
+
+	//org.apache.commons
+	compile 'org.apache.commons:com.springsource.org.apache.commons.fileupload:1.2.1'
+	compile 'org.apache.commons:com.springsource.org.apache.commons.io:1.4.0'
+
+//	compile 'org.apache.httpcomponents:httpclient:4.5.2'
+	// https://mvnrepository.com/artifact/org.apache.directory.studio/org.apache.commons.lang
+//	compile group: 'org.apache.directory.studio', name: 'org.apache.commons.lang', version: '2.6'
+
+	// Where do the JARs live on the filesystem?
+	compile fileTree(dir: "${webAppDirName}/WEB-INF/lib", include: '*.jar')
+
+	compileJava {
+		options.fork = true
+		options.forkOptions.executable = "javac" // assumes that javac is on PATH
+		options.compilerArgs << "-XDignore.symbol.file"
+	}
+
+}
+
+def loadGroovyConfig() {
+	def configFile = file("$rootDir/config.groovy")
+	new ConfigSlurper(environment).parse(configFile.toURL())
+}
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+// 重写processResources
+processResources {
+	// reset action
+	actions = []
+	doLast {
+		/*
+		 * filter有encode问题:https://issues.gradle.org/browse/GRADLE-1267
+		 */
+		ant.copy(todir: 'build/resources/main', encoding: 'utf8', outputencoding: 'utf8') {
+			fileset(dir: 'src/main/resources')
+			filterchain {
+				filterreader(classname: 'org.apache.tools.ant.filters.ReplaceTokens') {
+					config.jdbc.each{ k,v->
+						param(type: 'token', name: k, value: v)
+					}
+				}
+			}
+		}
+	}
+}
+
+task deploy(dependsOn: build) << {
+	/*
+	 config.deploy.each{
+	 k,v->println("$k: $v")
+	 }
+	 */
+
+	ssh.run {
+
+		settings { knownHosts = allowAnyHosts }
+
+		session(config.deploy.server01) {
+			println "uploading war file ..."
+			//删除之前的war包
+//			execute "rm -rf \$(find $config.deploy.dst ! -name '$war.archiveName' -and -name '*.war')"
+//			put from: 'build/libs/gssm*.war', into: config.deploy.dst
+//			execute "ln -sfT $config.deploy.dst/$war.archiveName $config.deploy.tomcat/webapps/gssm.war"
+//
+//			println "restart tomcat ..."
+//			execute "$config.deploy.tomcat/bin/shutdown.sh && $config.deploy.tomcat/bin/startup.sh"
+		}
+	}
+}
+
+task printConfig << { //println "ln -s $config.deploy.dst/$war.archiveName $config.deploy.tomcat/webapps/gssm.war"
+	print(config) }
+
+
