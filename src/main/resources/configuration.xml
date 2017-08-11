@@ -6,6 +6,8 @@
 		<!-- 指定当结果集中值为 null 的时候是否调用映射对象的 setter（map 对象时为 put）方法， 这对于有 Map.keySet() 
 			依赖或 null 值初始化的时候是有用的。 注意基本类型（int、boolean等）是不能设置成 null 的。 默认 false -->
 		<setting name="callSettersOnNulls" value="true" />
+		<!-- 指定log4j2为日志输出 -->
+		<setting name="logImpl" value="LOG4J2" /> 
 		<!-- 这个配置使全局的映射器启用或禁用缓存 -->
 		<setting name="cacheEnabled" value="true" />
 		<!-- 全局启用或禁用延迟加载。当禁用时，所有关联对象都会即时加载 -->
