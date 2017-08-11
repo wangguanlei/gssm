@@ -24,7 +24,7 @@ public class FirstController{
 	@Resource
 	private IFirstService firstService;
 	
-	@Log(name="您访问了first方法")
+//	@Log(name="您访问了first方法")
 	@ResponseBody
 	@RequestMapping(value="/f",method=RequestMethod.GET)
 	public String f(){
@@ -36,7 +36,7 @@ public class FirstController{
 		return "123456";
 	}
 	
-	@Log(name="您访问了first1方法")
+//	@Log(name="您访问了first1方法")
 	@ResponseBody
 	@RequestMapping(value="/f1",method=RequestMethod.GET)
 	public Map<String,Object> f1(){
@@ -46,7 +46,7 @@ public class FirstController{
 		return map;
 	}
 	
-	@SystemControllerLog(description="f2") 
+//	@SystemControllerLog(description="f2") 
 	@RequestMapping(value="/f2",method=RequestMethod.GET)
 	public ResponseEntity<Map<String,Object>> f2(){
 		Map<String,Object> map = new HashMap<String, Object>();
@@ -55,7 +55,7 @@ public class FirstController{
 		return new ResponseEntity<Map<String,Object>>(map,HttpStatus.FORBIDDEN);
 	}
 	
-	@SystemControllerLog(description="f3333333333333333333") 
+//	@SystemControllerLog(description="f3333333333333333333") 
 	@RequestMapping(value="/f3",method=RequestMethod.GET)
 	public ResponseEntity<Object> f3() throws Exception{
 		System.out.println("firstController->f3");
