@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO" monitorInterval="1800">
+    <appenders>
+        <Console name="consolePrint" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss} [%t] %-5level %logger{36} - %msg%n" />
+        </Console>
+    </appenders>
+
+    <loggers>
+        <logger name="com.wgl.ssm.dao" level="@loglevel@" additivity="false">
+            <appender-ref ref="consolePrint"/>
+        </logger>
+        <root level="info">
+            <appender-ref ref="consolePrint" />
+        </root>
+    </loggers>
+</Configuration>
