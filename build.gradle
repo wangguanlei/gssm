@@ -44,13 +44,20 @@ repositories {
 //   Section 51.4.4. File dependencies
 dependencies {
 
-	compile 'org.springframework:spring-context:4.2.4.RELEASE'
-	compile 'org.springframework:spring-webmvc:4.2.4.RELEASE'
-	compile 'org.springframework:spring-jdbc:4.2.4.RELEASE'
-	compile 'org.springframework:spring-test:4.2.4.RELEASE'
-
-	// https://mvnrepository.com/artifact/org.aspectj/aspectjweaver
-	compile group: 'org.aspectj', name: 'aspectjweaver', version: '1.8.10'
+	compile group: 'org.springframework', name: 'spring-beans', version: '4.3.10.RELEASE'
+	compile group: 'org.springframework', name: 'spring-core', version: '4.3.10.RELEASE'
+	compile group: 'org.springframework', name: 'spring-web', version: '4.3.10.RELEASE'
+	compile group: 'org.springframework', name: 'spring-context', version: '4.3.10.RELEASE'
+	compile group: 'org.springframework', name: 'spring-expression', version: '4.3.10.RELEASE'
+	compile group: 'org.springframework', name: 'spring-tx', version: '4.3.10.RELEASE'
+	compile group: 'org.springframework', name: 'spring-webmvc', version: '4.3.10.RELEASE'
+	compile group: 'org.springframework', name: 'spring-jdbc', version: '4.3.10.RELEASE'
+	compile group: 'org.springframework', name: 'spring-test', version: '4.3.10.RELEASE'
+	compile group: 'org.springframework', name: 'spring-aop', version: '4.3.10.RELEASE'
+	compile group: 'org.springframework', name: 'spring-aspects', version: '4.3.10.RELEASE'
+	
+	compile group: 'org.aopalliance', name: 'com.springsource.org.aopalliance', version: '1.0.0'
+	compile group: 'org.aspectj', name: 'com.springsource.org.aspectj.weaver', version: '1.7.2.RELEASE'
 	// apache shiro
 //	compile 'org.apache.shiro:shiro-core:1.2.4'
 //	compile 'org.apache.shiro:shiro-web:1.2.4'
@@ -80,10 +87,10 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.codehaus.jackson/jackson-mapper-asl
 	compile group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.9.13'
 
+	compile 'org.apache.logging.log4j:log4j-api:2.4.1'
 	compile 'org.apache.logging.log4j:log4j-core:2.4.1'
-	// The production code uses the SLF4J logging API at compile time
-//	compile 'org.slf4j:slf4j-api:1.7.12'
-	compile 'org.slf4j:slf4j-log4j12:1.7.16'
+	compile 'org.apache.logging.log4j:log4j-web:2.4.1'
+	compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.4.1'
 
 	//JSONObject-2.0
 	compile 'org.json:json:20160212'
